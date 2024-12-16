@@ -10,8 +10,8 @@ use InvalidArgumentException;
 
 class License
 {
-    protected const string LICENSE_DIR = __DIR__ . "/../data/choosealicense.com/_licenses/";
-    protected const string LICENSE_LIST_XML_DIR = __DIR__ . "/../data/license-list-XML/src/";
+    protected const string LICENSE_DIR = __DIR__ . "/../../data/choosealicense.com/_licenses/";
+    protected const string LICENSE_LIST_XML_DIR = __DIR__ . "/../../data/license-list-XML/src/";
 
     protected static ?array $licenses = null;
 

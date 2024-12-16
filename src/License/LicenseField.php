@@ -4,7 +4,7 @@ namespace Aternos\Licensee\License;
 
 class LicenseField
 {
-    protected const string FIELDS_FILE = __DIR__ . "/../data/choosealicense.com/_data/fields.yml";
+    protected const string FIELDS_FILE = __DIR__ . "/../../data/choosealicense.com/_data/fields.yml";
     protected static ?array $fields = null;
 
     /**
