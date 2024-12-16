@@ -2,6 +2,9 @@
 
 namespace Aternos\Licensee\License;
 
+use Aternos\Licensee\Generated\Condition;
+use Aternos\Licensee\Generated\Limitation;
+use Aternos\Licensee\Generated\Permission;
 use Aternos\Licensee\License\Text\KnownLicenseText;
 use Aternos\Licensee\License\Text\LicenseText;
 use DOMDocument;
@@ -22,9 +25,21 @@ class License
     protected string $description;
     protected string $how;
     protected array $using;
-    protected array $permissions;
-    protected array $conditions;
-    protected array $limitations;
+
+    /**
+     * @var Permission[]
+     */
+    protected array $permissions = [];
+
+    /**
+     * @var Condition[]
+     */
+    protected array $conditions = [];
+
+    /**
+     * @var Limitation[]
+     */
+    protected array $limitations = [];
 
     protected ?string $nickname = null;
     protected ?string $note = null;
@@ -114,9 +129,24 @@ class License
         $this->description = $metadata['description'] ?? '';
         $this->how = $metadata['how'] ?? '';
         $this->using = $metadata['using'] ?? [];
-        $this->permissions = $metadata['permissions'] ?? [];
-        $this->conditions = $metadata['conditions'] ?? [];
-        $this->limitations = $metadata['limitations'] ?? [];
+
+        if (isset($metadata['permissions'])) {
+            foreach ($metadata['permissions'] as $permission) {
+                $this->permissions[] = Permission::from($permission);
+            }
+        }
+
+        if (isset($metadata['conditions'])) {
+            foreach ($metadata['conditions'] as $condition) {
+                $this->conditions[] = Condition::from($condition);
+            }
+        }
+
+        if (isset($metadata['limitations'])) {
+            foreach ($metadata['limitations'] as $limitation) {
+                $this->limitations[] = Limitation::from($limitation);
+            }
+        }
 
         $this->nickname = $metadata['nickname'] ?? null;
         $this->note = $metadata['note'] ?? null;
@@ -214,7 +244,7 @@ class License
     }
 
     /**
-     * @return array
+     * @return Permission[]
      */
     public function getPermissions(): array
     {
@@ -222,7 +252,7 @@ class License
     }
 
     /**
-     * @return array
+     * @return Condition[]
      */
     public function getConditions(): array
     {
@@ -230,7 +260,7 @@ class License
     }
 
     /**
-     * @return array
+     * @return Limitation[]
      */
     public function getLimitations(): array
     {

@@ -2,7 +2,7 @@
 
 namespace Aternos\Licensee\License\Text;
 
-use Aternos\Licensee\License\LicenseField;
+use Aternos\Licensee\Generated\Field;
 use Aternos\Licensee\TextTransformer\AmpersandsTransformer;
 use Aternos\Licensee\TextTransformer\BordersTransformer;
 use Aternos\Licensee\TextTransformer\BulletTransformer;
@@ -180,7 +180,7 @@ class LicenseText
         if ($this->normalizedFields !== null) {
             return $this->normalizedFields;
         }
-        preg_match_all(LicenseField::getKeyRegex(), $this->getNormalizedContent(), $matches);
+        preg_match_all(Field::getKeyRegex(), $this->getNormalizedContent(), $matches);
         return $this->normalizedFields = array_values($matches[1]);
     }
 

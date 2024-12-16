@@ -1,0 +1,22 @@
+<?php
+
+namespace Aternos\Licensee\Generated;
+
+enum ###NAME### : string
+{
+###CASES###
+
+    public function getDescription(): string
+    {
+        return match($this) {
+###DESCRIPTIONS###
+        };
+    }
+
+    public function getLabel(): string
+    {
+        return match($this) {
+###LABELS###
+        };
+    }
+}

@@ -69,3 +69,58 @@ mkdir($dataPath . "/license-list-XML");
 echo "Extracting SPDX license list data\n";
 `tar zxf ${tmpFile} -C ${dataPath}/license-list-XML ${tarOpt} --strip-components=1 ${include}`;
 unlink($tmpFile);
+
+function toScreamingSnakeCase(string $string): string
+{
+    return strtoupper(preg_replace("/[^a-zA-Z0-9]+/", "_", $string));
+}
+
+function createRulesEnumFromData(array $data, string $filename): void
+{
+    $template = file_get_contents(__DIR__ . "/../data/templates/Rules.php.template");
+    $cases = [];
+    $descriptions = [];
+    $labels = [];
+
+    foreach ($data as $item) {
+        $name = toScreamingSnakeCase($item["tag"]);
+        $cases[] =          "    case $name = \"{$item["tag"]}\";";
+        $descriptions[] =   "            self::$name => \"{$item["description"]}\",";
+        $labels[] =         "            self::$name => \"{$item["label"]}\",";
+    }
+
+    $template = str_replace("###NAME###", $filename, $template);
+    $template = str_replace("###CASES###", implode("\n", $cases), $template);
+    $template = str_replace("###DESCRIPTIONS###", implode("\n", $descriptions), $template);
+    $template = str_replace("###LABELS###", implode("\n", $labels), $template);
+
+    file_put_contents(__DIR__ . "/../src/Generated/$filename.php", $template);
+}
+
+function createFieldEnumFromData(array $data): void
+{
+    $template = file_get_contents(__DIR__ . "/../data/templates/Field.php.template");
+    $cases = [];
+    $descriptions = [];
+
+    foreach ($data as $item) {
+        $name = toScreamingSnakeCase($item["name"]);
+        $cases[] =          "    case $name = \"{$item["name"]}\";";
+        $descriptions[] =   "            self::$name => \"{$item["description"]}\",";
+    }
+
+    $template = str_replace("###CASES###", implode("\n", $cases), $template);
+    $template = str_replace("###DESCRIPTIONS###", implode("\n", $descriptions), $template);
+
+    file_put_contents(__DIR__ . "/../src/Generated/Field.php", $template);
+}
+
+echo "Generating rules enums\n";
+$rules = yaml_parse_file(__DIR__ . "/../data/choosealicense.com/_data/rules.yml");
+createRulesEnumFromData($rules["permissions"], "Permission");
+createRulesEnumFromData($rules["conditions"], "Condition");
+createRulesEnumFromData($rules["limitations"], "Limitation");
+
+echo "Generating field enum\n";
+$fields = yaml_parse_file(__DIR__ . "/../data/choosealicense.com/_data/fields.yml");
+createFieldEnumFromData($fields);

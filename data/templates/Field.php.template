@@ -1,0 +1,27 @@
+<?php
+
+namespace Aternos\Licensee\Generated;
+
+enum Field : string
+{
+###CASES###
+
+    /**
+     * @return string
+     */
+    public static function getKeyRegex(): string
+    {
+        $parts = [];
+        foreach (self::cases() as $field) {
+            $parts[] = preg_quote($field->value, "/");
+        }
+        return "/\[(" . implode("|", $parts) . ")\]/";
+    }
+
+    public function getDescription(): string
+    {
+        return match($this) {
+###DESCRIPTIONS###
+        };
+    }
+}
