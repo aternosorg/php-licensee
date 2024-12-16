@@ -1,0 +1,71 @@
+#!/usr/bin/env php
+<?php
+
+function removeDirectory(string $path): void
+{
+    if (!is_dir($path)) {
+        throw new InvalidArgumentException("$path must be a directory");
+    }
+
+    $items = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS),
+        RecursiveIteratorIterator::CHILD_FIRST
+    );
+
+    foreach ($items as $item) {
+        if ($item->isDir()) {
+            rmdir($item->getRealPath());
+        } else {
+            unlink($item->getRealPath());
+        }
+    }
+
+    rmdir($path);
+}
+
+$dataPath = __DIR__ . "/../data";
+$context = stream_context_create([
+    "http" => [
+        "header" => "User-Agent: php-licensee"
+    ]
+]);
+
+echo "Downloading choosealicense.com data\n";
+$tmpFile = tempnam(sys_get_temp_dir(), "licensee-update-data");
+$fp = fopen($tmpFile, "w");
+$req = fopen("https://api.github.com/repos/github/choosealicense.com/tarball", "r", false, $context);
+stream_copy_to_stream($req, $fp);
+fclose($req);
+fclose($fp);
+
+removeDirectory($dataPath . "/choosealicense.com");
+mkdir($dataPath . "/choosealicense.com");
+
+echo "Extracting choosealicense.com data\n";
+$bsdTar = str_contains(explode("\n", `tar --version`)[0], "bsdtar");
+$tarOpt = $bsdTar ? "" : "--wildcards";
+`tar zxf ${tmpFile} -C ${dataPath}/choosealicense.com ${tarOpt} --strip-components=1 */_data/* */_licenses/*`;
+unlink($tmpFile);
+
+
+$include = [];
+foreach (glob($dataPath . "/choosealicense.com/_licenses/*.txt") as $file) {
+    $content = yaml_parse_file($file);
+    $include[] = "*/src/" . $content["spdx-id"] . ".xml";
+}
+$include = implode(" ", $include);
+
+echo "Downloading SPDX license list data\n";
+$tmpFile = tempnam(sys_get_temp_dir(), "licensee-update-data");
+$fp = fopen($tmpFile, "w");
+$req = fopen("https://api.github.com/repos/spdx/license-list-XML/tarball", "r", false, $context);
+stream_copy_to_stream($req, $fp);
+fclose($req);
+fclose($fp);
+
+removeDirectory($dataPath . "/license-list-XML");
+mkdir($dataPath . "/license-list-XML");
+
+echo "Extracting SPDX license list data\n";
+`tar zxf ${tmpFile} -C ${dataPath}/license-list-XML ${tarOpt} --strip-components=1 ${include}`;
+unlink($tmpFile);
