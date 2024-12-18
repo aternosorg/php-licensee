@@ -5,6 +5,7 @@ namespace Aternos\Licensee\License;
 use Aternos\Licensee\Generated\Condition;
 use Aternos\Licensee\Generated\Limitation;
 use Aternos\Licensee\Generated\Permission;
+use Aternos\Licensee\Generated\Spdx;
 use Aternos\Licensee\License\Text\KnownLicenseText;
 use Aternos\Licensee\License\Text\LicenseText;
 use DOMDocument;
@@ -21,7 +22,7 @@ class License
     protected LicenseText $text;
 
     protected string $title;
-    protected string $spdxId;
+    protected Spdx $spdxId;
     protected string $description;
     protected string $how;
     protected array $using;
@@ -77,10 +78,10 @@ class License
     }
 
     /**
-     * @param string $id
+     * @param Spdx $id
      * @return License|null
      */
-    public static function getBySpdxId(string $id): ?License
+    public static function getBySpdxId(Spdx $id): ?License
     {
         foreach (static::getAll() as $license) {
             if ($license->getSpdxId() === $id) {
@@ -105,7 +106,7 @@ class License
      */
     protected function readSpdxXmlContent(): string
     {
-        return file_get_contents(static::LICENSE_LIST_XML_DIR . $this->getSpdxId() . ".xml");
+        return file_get_contents(static::LICENSE_LIST_XML_DIR . $this->getSpdxId()->value . ".xml");
     }
 
     /**
@@ -125,7 +126,7 @@ class License
         }
 
         $this->title = $metadata['title'] ?? '';
-        $this->spdxId = $metadata['spdx-id'];
+        $this->spdxId = Spdx::from($metadata['spdx-id']);
         $this->description = $metadata['description'] ?? '';
         $this->how = $metadata['how'] ?? '';
         $this->using = $metadata['using'] ?? [];
@@ -183,7 +184,7 @@ class License
         }
         $titleRegex = preg_replace('/\bgnu\\\ /i', '(?:GNU )?', $titleRegex);
 
-        $keyRegex = str_replace('-', '[- ]', $this->spdxId);
+        $keyRegex = str_replace('-', '[- ]', $this->getSpdxId()->value);
         $keyRegex = str_replace('.', '\.', $keyRegex);
         $keyRegex .= '(?:\ licen[sc]e)?';
 
@@ -212,9 +213,9 @@ class License
     }
 
     /**
-     * @return string
+     * @return Spdx
      */
-    public function getSpdxId(): string
+    public function getSpdxId(): Spdx
     {
         return $this->spdxId;
     }
@@ -299,7 +300,7 @@ class License
         if ($this->title) {
             return $this->title;
         }
-        return $this->spdxId;
+        return $this->spdxId->value;
     }
 
     /**
@@ -354,6 +355,6 @@ class License
      */
     public function isCreativeCommons(): string
     {
-        return str_starts_with(strtolower($this->getSpdxId()), "cc-");
+        return str_starts_with(strtolower($this->getSpdxId()->value), "cc-");
     }
 }

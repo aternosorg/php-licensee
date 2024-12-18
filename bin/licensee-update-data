@@ -115,6 +115,31 @@ function createFieldEnumFromData(array $data): void
     file_put_contents(__DIR__ . "/../src/Generated/Field.php", $template);
 }
 
+function createSpdxEnum(): void
+{
+    $template = file_get_contents(__DIR__ . "/../data/templates/Spdx.php.template");
+    $cases = [];
+
+    foreach (scandir(__DIR__ . "/../data/choosealicense.com/_licenses") as $file) {
+        if ($file === "." || $file === ".." || !str_ends_with($file, ".txt")) {
+            continue;
+        }
+
+        $license = yaml_parse_file(__DIR__ . "/../data/choosealicense.com/_licenses/$file");
+        $id = $license["spdx-id"];
+
+        $name = toScreamingSnakeCase($id);
+        if (str_starts_with($name, "0")) {
+            $name = "ZERO_" . substr($name, 1);
+        }
+        $cases[] =          "    case $name = \"{$id}\";";
+    }
+
+    $template = str_replace("###CASES###", implode("\n", $cases), $template);
+
+    file_put_contents(__DIR__ . "/../src/Generated/Spdx.php", $template);
+}
+
 echo "Generating rules enums\n";
 $rules = yaml_parse_file(__DIR__ . "/../data/choosealicense.com/_data/rules.yml");
 createRulesEnumFromData($rules["permissions"], "Permission");
@@ -124,3 +149,6 @@ createRulesEnumFromData($rules["limitations"], "Limitation");
 echo "Generating field enum\n";
 $fields = yaml_parse_file(__DIR__ . "/../data/choosealicense.com/_data/fields.yml");
 createFieldEnumFromData($fields);
+
+echo "Generating SPDX enum\n";
+createSpdxEnum();

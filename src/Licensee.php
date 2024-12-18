@@ -21,7 +21,7 @@ class Licensee
     {
         $lowercaseId = strtolower($id);
         foreach (License::getAll() as $license) {
-            if (strtolower($license->getKey()) === $lowercaseId || strtolower($license->getSpdxId()) === $lowercaseId) {
+            if (strtolower($license->getKey()) === $lowercaseId || strtolower($license->getSpdxId()->value) === $lowercaseId) {
                 return $license;
             }
         }
