@@ -46,7 +46,7 @@ echo "Found " . $match->getLicense()->getTitle() . "\n";
 echo "Confidence: " . $match->getConfidence() . "\n";
 ```
 
-This will try to find a license that is an exact match ([after some normalization steps](src/TextTransformer/)),
+This will try to find a license that is an exact match ([after some normalization steps](src/TextTransformer)),
 or use a version of the [Dice-Sørensen coefficient](https://en.wikipedia.org/wiki/Dice-S%C3%B8rensen_coefficient).
 
 Optionally, a `confidenceThreshold` value between 0 and 100 can be supplied to `findLicenseByContent`.

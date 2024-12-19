@@ -12,7 +12,7 @@ class MatcherResult
      */
     public function __construct(
         protected License $license,
-        protected float $confidence
+        protected float   $confidence
     )
     {
     }

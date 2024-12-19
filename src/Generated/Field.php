@@ -2,7 +2,7 @@
 
 namespace Aternos\Licensee\Generated;
 
-enum Field : string
+enum Field: string
 {
     case FULLNAME = "fullname";
     case LOGIN = "login";
@@ -26,7 +26,7 @@ enum Field : string
 
     public function getDescription(): string
     {
-        return match($this) {
+        return match ($this) {
             self::FULLNAME => "The full name or username of the repository owner",
             self::LOGIN => "The repository owner's username",
             self::EMAIL => "The repository owner's primary email address",

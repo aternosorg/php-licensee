@@ -2,7 +2,7 @@
 
 namespace Aternos\Licensee\Generated;
 
-enum Condition : string
+enum Condition: string
 {
     case INCLUDE_COPYRIGHT = "include-copyright";
     case INCLUDE_COPYRIGHT_SOURCE = "include-copyright--source";
@@ -15,7 +15,7 @@ enum Condition : string
 
     public function getDescription(): string
     {
-        return match($this) {
+        return match ($this) {
             self::INCLUDE_COPYRIGHT => "A copy of the license and copyright notice must be included with the licensed material.",
             self::INCLUDE_COPYRIGHT_SOURCE => "A copy of the license and copyright notice must be included with the licensed material in source form, but is not required for binaries.",
             self::DOCUMENT_CHANGES => "Changes made to the licensed material must be documented.",
@@ -29,7 +29,7 @@ enum Condition : string
 
     public function getLabel(): string
     {
-        return match($this) {
+        return match ($this) {
             self::INCLUDE_COPYRIGHT => "License and copyright notice",
             self::INCLUDE_COPYRIGHT_SOURCE => "License and copyright notice for source",
             self::DOCUMENT_CHANGES => "State changes",

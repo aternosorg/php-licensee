@@ -2,7 +2,7 @@
 
 namespace Aternos\Licensee\Generated;
 
-enum Permission : string
+enum Permission: string
 {
     case COMMERCIAL_USE = "commercial-use";
     case MODIFICATIONS = "modifications";
@@ -12,7 +12,7 @@ enum Permission : string
 
     public function getDescription(): string
     {
-        return match($this) {
+        return match ($this) {
             self::COMMERCIAL_USE => "The licensed material and derivatives may be used for commercial purposes.",
             self::MODIFICATIONS => "The licensed material may be modified.",
             self::DISTRIBUTION => "The licensed material may be distributed.",
@@ -23,7 +23,7 @@ enum Permission : string
 
     public function getLabel(): string
     {
-        return match($this) {
+        return match ($this) {
             self::COMMERCIAL_USE => "Commercial use",
             self::MODIFICATIONS => "Modification",
             self::DISTRIBUTION => "Distribution",

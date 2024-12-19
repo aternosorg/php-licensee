@@ -11,7 +11,7 @@ class KnownLicenseText extends LicenseText
      * @param License $license
      */
     public function __construct(
-        string $content,
+        string            $content,
         protected License $license
     )
     {

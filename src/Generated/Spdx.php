@@ -2,7 +2,7 @@
 
 namespace Aternos\Licensee\Generated;
 
-enum Spdx : string
+enum Spdx: string
 {
     case ZERO_BSD = "0BSD";
     case AFL_3_0 = "AFL-3.0";

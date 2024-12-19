@@ -2,7 +2,7 @@
 
 namespace Aternos\Licensee\Generated;
 
-enum Field : string
+enum Field: string
 {
 ###CASES###
 
@@ -20,7 +20,7 @@ enum Field : string
 
     public function getDescription(): string
     {
-        return match($this) {
+        return match ($this) {
 ###DESCRIPTIONS###
         };
     }

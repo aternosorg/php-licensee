@@ -2,7 +2,7 @@
 
 namespace Aternos\Licensee\Generated;
 
-enum Spdx : string
+enum Spdx: string
 {
 ###CASES###
 }

@@ -32,7 +32,6 @@ use Aternos\Licensee\TextTransformer\StripUnlicenseOptionalTransformer;
 use Aternos\Licensee\TextTransformer\StripUrlTransformer;
 use Aternos\Licensee\TextTransformer\StripVersionTransformer;
 use Aternos\Licensee\TextTransformer\StripWhitespaceTransformer;
-use Aternos\Licensee\TextTransformer\TextTransformer;
 
 class LicenseText
 {

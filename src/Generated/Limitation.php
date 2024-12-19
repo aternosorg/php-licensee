@@ -2,7 +2,7 @@
 
 namespace Aternos\Licensee\Generated;
 
-enum Limitation : string
+enum Limitation: string
 {
     case TRADEMARK_USE = "trademark-use";
     case LIABILITY = "liability";
@@ -11,7 +11,7 @@ enum Limitation : string
 
     public function getDescription(): string
     {
-        return match($this) {
+        return match ($this) {
             self::TRADEMARK_USE => "This license explicitly states that it does NOT grant trademark rights, even though licenses without such a statement probably do not grant any implicit trademark rights.",
             self::LIABILITY => "This license includes a limitation of liability.",
             self::PATENT_USE => "This license explicitly states that it does NOT grant any rights in the patents of contributors.",
@@ -21,7 +21,7 @@ enum Limitation : string
 
     public function getLabel(): string
     {
-        return match($this) {
+        return match ($this) {
             self::TRADEMARK_USE => "Trademark use",
             self::LIABILITY => "Liability",
             self::PATENT_USE => "Patent use",
