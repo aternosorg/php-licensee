@@ -35,7 +35,7 @@ class Licensee
      * @param bool $allowMatchWithoutVersion - If true, the title can match without the version part of the license title
      * @return License|null
      */
-    public function findLicenseByTitle(string $title, bool $allowMatchWithoutVersion): ?License
+    public function findLicenseByTitle(string $title, bool $allowMatchWithoutVersion = false): ?License
     {
         foreach (License::getAll() as $license) {
             if (strtolower($license->getTitle()) === strtolower($title)) {
