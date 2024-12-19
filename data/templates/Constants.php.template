@@ -1,0 +1,10 @@
+<?php
+
+namespace Aternos\Licensee\Generated;
+
+class Constants
+{
+    public const array EQUIVALENT_WORDS = [
+###EQUIVALENT_WORDS###
+    ];
+}

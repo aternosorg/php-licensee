@@ -53,6 +53,7 @@ foreach (glob($dataPath . "/choosealicense.com/_licenses/*.txt") as $file) {
     $content = yaml_parse_file($file);
     $include[] = "*/src/" . $content["spdx-id"] . ".xml";
 }
+$include[] = "*/equivalentwords.txt";
 $include = implode(" ", $include);
 
 echo "Downloading SPDX license list data\n";
@@ -140,6 +141,41 @@ function createSpdxEnum(): void
     file_put_contents(__DIR__ . "/../src/Generated/Spdx.php", $template);
 }
 
+function createConstants(): void
+{
+    $template = file_get_contents(__DIR__ . "/../data/templates/Constants.php.template");
+
+    $equivalentWords = [];
+    $data = file_get_contents(__DIR__ . "/../data/license-list-XML/equivalentwords.txt");
+    foreach (explode("\n", $data) as $line) {
+        $line = trim($line);
+        if ($line === "") {
+            continue;
+        }
+
+        [$to, $from] = explode(",", $line, 2);
+
+        foreach ($equivalentWords as $i => $words) {
+            if (in_array($to, $words) || in_array($from, $words)) {
+                $equivalentWords[$i][] = $to;
+                $equivalentWords[$i][] = $from;
+                $equivalentWords[$i] = array_unique($equivalentWords[$i]);
+                continue 2;
+            }
+        }
+
+        $equivalentWords[] = [$to, $from];
+    }
+
+    $strings = [];
+    foreach ($equivalentWords as $words) {
+        $strings[] = "        \"" . $words[0] . "\" => [" . implode(", ", array_map(json_encode(...), array_slice($words, 1))) . "],";
+    }
+
+    $template = str_replace("###EQUIVALENT_WORDS###", implode("\n", $strings), $template);
+    file_put_contents(__DIR__ . "/../src/Generated/Constants.php", $template);
+}
+
 echo "Generating rules enums\n";
 $rules = yaml_parse_file(__DIR__ . "/../data/choosealicense.com/_data/rules.yml");
 createRulesEnumFromData($rules["permissions"], "Permission");
@@ -152,3 +188,6 @@ createFieldEnumFromData($fields);
 
 echo "Generating SPDX enum\n";
 createSpdxEnum();
+
+echo "Generating constants\n";
+createConstants();
