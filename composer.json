@@ -1,5 +1,5 @@
 {
-    "name": "aternos/php-licensee",
+    "name": "aternos/licensee",
     "type": "library",
     "license": "MIT",
     "bin": ["bin/licensee-update-data"],
