@@ -1,5 +1,6 @@
 {
     "name": "aternos/licensee",
+    "description": "A library to detect well-known licenses based on their title or content.",
     "type": "library",
     "license": "MIT",
     "bin": ["bin/licensee-update-data"],
