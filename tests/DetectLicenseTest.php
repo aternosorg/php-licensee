@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Aternos\Licensee\Generated\Spdx;
 use Aternos\Licensee\License\Text\LicenseText;
 use Aternos\Licensee\Licensee;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -95,5 +96,15 @@ class DetectLicenseTest extends TestCase
             $this->assertNotNull($match);
             $this->assertEquals($expected, $match->getLicense()->getKey());
         }
+    }
+
+    public function testPreferExactTitleMatchOverMatchWithoutVersion(): void
+    {
+        $licensee = new Licensee();
+        $match = $licensee->findLicenseByTitle('GNU General Public License', true);
+        $this->assertEquals(Spdx::GPL_2_0, $match->getSpdxId());
+
+        $match = $licensee->findLicenseByTitle('GNU General Public License v3.0', true);
+        $this->assertEquals(Spdx::GPL_3_0, $match->getSpdxId());
     }
 }

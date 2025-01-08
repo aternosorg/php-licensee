@@ -45,8 +45,10 @@ class Licensee
             if (preg_match('/' . $license->getTitleRegex() . '/i', $title)) {
                 return $license;
             }
+        }
 
-            if ($allowMatchWithoutVersion) {
+        if ($allowMatchWithoutVersion) {
+            foreach (License::getAll() as $license) {
                 if (preg_match('/' . preg_quote($license->getNameWithoutVersion(), "/") . '/i', $title)) {
                     return $license;
                 }
