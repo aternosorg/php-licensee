@@ -34,8 +34,8 @@ $license = $licensee->findLicenseByTitle('MIT License');
 echo "Found " . $license->getTitle() . "\n";
 ```
 
-Setting the optional argument `allowMatchWithoutVersion` to `true` will allow the detection of licenses without considering the version number.
-Note that this will return the first license that matches the title, which might not be the correct one if version numbers are ignored.
+Setting the optional argument `allowMatchWithoutVersion` to `true` will allow the detection of licenses
+without considering the version number, in case no exact match can be found.
 
 ### Detect license by content
 
