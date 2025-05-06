@@ -2,6 +2,7 @@
 
 namespace Aternos\Licensee\Matcher;
 
+use Aternos\Licensee\Exception\RegExpException;
 use Aternos\Licensee\License\License;
 use Aternos\Licensee\License\Text\LicenseText;
 
@@ -29,11 +30,13 @@ abstract class Matcher
     /**
      * @param License $license
      * @return float
+     * @throws RegExpException
      */
     abstract protected function match(License $license): float;
 
     /**
      * @return MatcherResult[]
+     * @throws RegExpException
      */
     public function getAllMatches(): array
     {
@@ -52,6 +55,7 @@ abstract class Matcher
     /**
      * @param float $confidenceThreshold
      * @return MatcherResult|null
+     * @throws RegExpException
      */
     public function getMatch(float $confidenceThreshold = self::CONFIDENCE_THRESHOLD): ?MatcherResult
     {

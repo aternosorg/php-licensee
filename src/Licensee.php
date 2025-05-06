@@ -66,6 +66,7 @@ class Licensee
      * @param LicenseText $content
      * @param float $confidenceThreshold - The minimum confidence level for a match to be returned (0-100)
      * @return MatcherResult|null
+     * @throws RegExpException
      */
     public function findLicenseByContent(LicenseText $content, float $confidenceThreshold = Matcher::CONFIDENCE_THRESHOLD): ?MatcherResult
     {
@@ -74,6 +75,7 @@ class Licensee
             new DiceMatcher($content)
         ];
 
+        /** @var class-string<Matcher> $matcher */
         foreach ($matchers as $matcher) {
             $match = $matcher->getMatch($confidenceThreshold);
             if ($match) {
