@@ -2,6 +2,8 @@
 
 namespace Aternos\Licensee\TextTransformer;
 
+use Aternos\Licensee\Exception\RegExpException;
+
 class RegexReplaceTransformer extends TextTransformer
 {
     /**
@@ -20,6 +22,6 @@ class RegexReplaceTransformer extends TextTransformer
      */
     public function transform(string $text): string
     {
-        return preg_replace($this->regex, $this->replacement, $text);
+        return RegExpException::handleNull(preg_replace($this->regex, $this->replacement, $text));
     }
 }

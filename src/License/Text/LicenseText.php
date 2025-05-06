@@ -2,6 +2,7 @@
 
 namespace Aternos\Licensee\License\Text;
 
+use Aternos\Licensee\Exception\RegExpException;
 use Aternos\Licensee\Generated\Field;
 use Aternos\Licensee\TextTransformer\AmpersandsTransformer;
 use Aternos\Licensee\TextTransformer\BordersTransformer;
@@ -95,6 +96,7 @@ class LicenseText
 
     /**
      * @return string
+     * @throws RegExpException
      */
     public function getNormalizedContent(): string
     {
@@ -102,7 +104,7 @@ class LicenseText
             $this->normalizedContent = $this->content;
             foreach ($this->transformers as $transformer) {
                 $this->normalizedContent = $transformer->transform($this->normalizedContent);
-                $this->normalizedContent = preg_replace("# +#", " ", $this->normalizedContent);
+                $this->normalizedContent = RegExpException::handleNull(preg_replace("# +#", " ", $this->normalizedContent));
                 $this->normalizedContent = trim($this->normalizedContent);
             }
         }
@@ -111,6 +113,7 @@ class LicenseText
 
     /**
      * @return int
+     * @throws RegExpException
      */
     public function getNormalizedLength(): int
     {
@@ -119,12 +122,13 @@ class LicenseText
 
     /**
      * @return string[]
+     * @throws RegExpException
      */
     public function getWordSet(): array
     {
         if (!isset($this->wordSet)) {
             $matches = [];
-            if (preg_match_all('/(?:[\w\/-](?:\'s|(?<=s)\')?)+/', $this->getNormalizedContent(), $matches)) {
+            if (RegExpException::handleFalse(preg_match_all('/(?:[\w\/-](?:\'s|(?<=s)\')?)+/', $this->getNormalizedContent(), $matches))) {
                 $this->wordSet = array_unique($matches[0]);
             } else {
                 $this->wordSet = [];
@@ -135,6 +139,7 @@ class LicenseText
 
     /**
      * @return string[]
+     * @throws RegExpException
      */
     public function getFieldlessWordSet(): array
     {
@@ -144,6 +149,7 @@ class LicenseText
     /**
      * @param LicenseText $other
      * @return float
+     * @throws RegExpException
      */
     public function getSimilarity(LicenseText $other): float
     {
@@ -156,6 +162,7 @@ class LicenseText
     /**
      * @param LicenseText $other
      * @return int
+     * @throws RegExpException
      */
     protected function getLengthDelta(LicenseText $other): int
     {
@@ -165,6 +172,7 @@ class LicenseText
     /**
      * @param LicenseText $other
      * @return int
+     * @throws RegExpException
      */
     protected function getVariationAdjustedLengthDelta(LicenseText $other): int
     {
@@ -173,18 +181,20 @@ class LicenseText
 
     /**
      * @return string[]
+     * @throws RegExpException
      */
     public function getNormalizedFields(): array
     {
         if ($this->normalizedFields !== null) {
             return $this->normalizedFields;
         }
-        preg_match_all(Field::getKeyRegex(), $this->getNormalizedContent(), $matches);
+        RegExpException::handleFalse(preg_match_all(Field::getKeyRegex(), $this->getNormalizedContent(), $matches));
         return $this->normalizedFields = array_values($matches[1]);
     }
 
     /**
      * @return string[]
+     * @throws RegExpException
      */
     public function getUniqueNormalizedFields(): array
     {
@@ -196,13 +206,15 @@ class LicenseText
 
     /**
      * @return bool
+     * @throws RegExpException
      */
     public function hasPotentialCCFalsePositives(): bool
     {
         if ($this->potentialCCFalsePositives !== null) {
             return $this->potentialCCFalsePositives;
         }
-        return $this->potentialCCFalsePositives = !!preg_match('/^(creative commons )?Attribution-(NonCommercial|NoDerivatives)/i', $this->content) > 0;
+        return $this->potentialCCFalsePositives =
+            RegExpException::handleFalse(preg_match('/^(creative commons )?Attribution-(NonCommercial|NoDerivatives)/i', $this->content)) > 0;
     }
 
     /**

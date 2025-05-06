@@ -2,6 +2,7 @@
 
 namespace Aternos\Licensee\License;
 
+use Aternos\Licensee\Exception\RegExpException;
 use Aternos\Licensee\Generated\Condition;
 use Aternos\Licensee\Generated\Limitation;
 use Aternos\Licensee\Generated\Permission;
@@ -11,6 +12,7 @@ use Aternos\Licensee\License\Text\LicenseText;
 use DOMDocument;
 use DOMNode;
 use InvalidArgumentException;
+use RuntimeException;
 
 class License
 {
@@ -98,7 +100,11 @@ class License
         protected string $key
     )
     {
-        $this->parseLicenseFile(file_get_contents(static::LICENSE_DIR . $key . ".txt"));
+        try {
+            $this->parseLicenseFile(file_get_contents(static::LICENSE_DIR . $key . ".txt"));
+        } catch (RegExpException $e) {
+            throw new RuntimeException("Built-in license file \"" . $key . "\" could not be loaded.", previous: $e);
+        }
     }
 
     /**
@@ -112,6 +118,7 @@ class License
     /**
      * @param string $content
      * @return void
+     * @throws RegExpException
      */
     protected function parseLicenseFile(string $content): void
     {
@@ -120,7 +127,7 @@ class License
             throw new InvalidArgumentException("Invalid license format");
         }
 
-        $parts = preg_split('/^---\s*$/m', $content, 3);
+        $parts = RegExpException::handleFalse(preg_split('/^---\s*$/m', $content, 3));
         if (count($parts) !== 3) {
             throw new InvalidArgumentException("Invalid license format");
         }
@@ -158,6 +165,7 @@ class License
     /**
      * I used the regex to regex the regex
      * @return string
+     * @throws RegExpException
      */
     public function getTitleRegex(): string
     {
@@ -168,29 +176,29 @@ class License
         $simpleTitleRegex = strtolower($this->title);
         $simpleTitleRegex = str_replace('*', 'u', $simpleTitleRegex);
         $simpleTitleRegex = preg_quote($simpleTitleRegex, '/');
-        $titleRegex = preg_replace('/^the /i', '', $simpleTitleRegex);
-        $titleRegex = preg_replace('/,? version /', ' ', $titleRegex);
-        $titleRegex = preg_replace('/v(\d+\.\d+)/', '$1', $titleRegex);
-        $titleRegex = preg_quote($titleRegex, '/');
-        $titleRegex = preg_replace('/\\\ licen[sc]e/i', '(?:\ licen[sc]e)?', $titleRegex);
-        preg_match('/\d+\\\+\.(\d+)/', $titleRegex, $versionMatch);
+        $titleRegex = RegExpException::handleNull(preg_replace('/^the /i', '', $simpleTitleRegex));
+        $titleRegex = RegExpException::handleNull(preg_replace('/,? version /', ' ', $titleRegex));
+        $titleRegex = RegExpException::handleNull(preg_replace('/v(\d+\.\d+)/', '$1', $titleRegex));
+        $titleRegex = RegExpException::handleNull(preg_quote($titleRegex, '/'));
+        $titleRegex = RegExpException::handleNull(preg_replace('/\\\ licen[sc]e/i', '(?:\ licen[sc]e)?', $titleRegex));
+        RegExpException::handleFalse(preg_match('/\d+\\\+\.(\d+)/', $titleRegex, $versionMatch));
         if ($versionMatch) {
             if ($versionMatch[1] === '0') {
                 $sub = ',?\s+(?:version\ |v(?:\. )?)?$1($2)?';
             } else {
                 $sub = ',?\s+(?:version\ |v(?:\. )?)?$1$2';
             }
-            $titleRegex = preg_replace('/\s*(\d+)\\\+(\.\d+)/', $sub, $titleRegex);
+            $titleRegex = RegExpException::handleNull(preg_replace('/\s*(\d+)\\\+(\.\d+)/', $sub, $titleRegex));
         }
-        $titleRegex = preg_replace('/\bgnu\\\ /i', '(?:GNU )?', $titleRegex);
+        $titleRegex = RegExpException::handleNull(preg_replace('/\bgnu\\\ /i', '(?:GNU )?', $titleRegex));
 
-        $keyRegex = str_replace('-', '[- ]', $this->getSpdxId()->value);
-        $keyRegex = str_replace('.', '\.', $keyRegex);
+        $keyRegex = RegExpException::handleNull(str_replace('-', '[- ]', $this->getSpdxId()->value));
+        $keyRegex = RegExpException::handleNull(str_replace('.', '\.', $keyRegex));
         $keyRegex .= '(?:\ licen[sc]e)?';
 
         $parts = [$simpleTitleRegex, $titleRegex, $keyRegex];
         if ($this->nickname) {
-            $parts[] = preg_replace('/\bGNU /i', '(?:GNU )?', preg_quote($this->nickname, '/'));
+            $parts[] = RegExpException::handleNull(preg_replace('/\bGNU /i', '(?:GNU )?', preg_quote($this->nickname, '/')));
         }
 
         return $this->titleRegexp = implode('|', $parts);

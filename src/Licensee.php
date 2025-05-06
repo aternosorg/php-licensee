@@ -2,6 +2,7 @@
 
 namespace Aternos\Licensee;
 
+use Aternos\Licensee\Exception\RegExpException;
 use Aternos\Licensee\License\License;
 use Aternos\Licensee\License\Text\LicenseText;
 use Aternos\Licensee\Matcher\DiceMatcher;
@@ -34,6 +35,7 @@ class Licensee
      * @param string $title
      * @param bool $allowMatchWithoutVersion - If true, the title can match without the version part of the license title
      * @return License|null
+     * @throws RegExpException
      */
     public function findLicenseByTitle(string $title, bool $allowMatchWithoutVersion = false): ?License
     {
@@ -42,14 +44,14 @@ class Licensee
                 return $license;
             }
 
-            if (preg_match('/' . $license->getTitleRegex() . '/i', $title)) {
+            if (RegExpException::handleFalse(preg_match('/' . $license->getTitleRegex() . '/i', $title))) {
                 return $license;
             }
         }
 
         if ($allowMatchWithoutVersion) {
             foreach (License::getAll() as $license) {
-                if (preg_match('/' . preg_quote($license->getNameWithoutVersion(), "/") . '/i', $title)) {
+                if (RegExpException::handleFalse(preg_match('/' . preg_quote($license->getNameWithoutVersion(), "/") . '/i', $title))) {
                     return $license;
                 }
             }

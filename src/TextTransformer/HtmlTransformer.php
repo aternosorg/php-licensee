@@ -2,6 +2,7 @@
 
 namespace Aternos\Licensee\TextTransformer;
 
+use Aternos\Licensee\Exception\RegExpException;
 use League\HTMLToMarkdown\HtmlConverter;
 
 class HtmlTransformer extends TextTransformer
@@ -23,7 +24,6 @@ class HtmlTransformer extends TextTransformer
     public function transform(string $text): string
     {
         $md = $this->converter->convert($text);
-        $md = preg_replace('/<\?xml .*?\?>/', '', $md);
-        return $md;
+        return RegExpException::handleNull(preg_replace('/<\?xml .*?\?>/', '', $md));
     }
 }

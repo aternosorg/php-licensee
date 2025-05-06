@@ -2,6 +2,7 @@
 
 namespace Aternos\Licensee\TextTransformer;
 
+use Aternos\Licensee\Exception\RegExpException;
 use Aternos\Licensee\License\License;
 
 class GenericStripTitleTransformer extends TextTransformer
@@ -29,8 +30,8 @@ class GenericStripTitleTransformer extends TextTransformer
             $match = false;
             foreach ($titles as $title) {
                 $pattern = '/\A\s*\(?(?:the )?(' . $title . ').*?$/imu';
-                if (preg_match($pattern, $text)) {
-                    $text = preg_replace($pattern, " ", $text);
+                if (RegExpException::handleFalse(preg_match($pattern, $text))) {
+                    $text = RegExpException::handleNull(preg_replace($pattern, " ", $text));
                     $match = true;
                 }
             }

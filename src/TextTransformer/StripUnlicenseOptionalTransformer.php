@@ -2,6 +2,8 @@
 
 namespace Aternos\Licensee\TextTransformer;
 
+use Aternos\Licensee\Exception\RegExpException;
+
 class StripUnlicenseOptionalTransformer extends TextTransformer
 {
     /**
@@ -10,7 +12,7 @@ class StripUnlicenseOptionalTransformer extends TextTransformer
     public function transform(string $text): string
     {
         if (str_contains($text, "unlicense")) {
-            $text = preg_replace('/For more information, please.*\S+unlicense\S+/im', ' ', $text);
+            $text = RegExpException::handleNull(preg_replace('/For more information, please.*\S+unlicense\S+/im', ' ', $text));
         }
         return $text;
     }

@@ -2,6 +2,7 @@
 
 namespace Aternos\Licensee\TextTransformer;
 
+use Aternos\Licensee\Exception\RegExpException;
 use Aternos\Licensee\Generated\Constants;
 
 class SpellingTransformer extends TextTransformer
@@ -18,7 +19,7 @@ class SpellingTransformer extends TextTransformer
             }
 
             $pattern = "/\b(" . implode("|", $escapedFrom) . ")\b/i";
-            $text = preg_replace($pattern, $to, $text);
+            $text = RegExpException::handleNull(preg_replace($pattern, $to, $text));
         }
         return $text;
     }
