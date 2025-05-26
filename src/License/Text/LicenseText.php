@@ -33,9 +33,13 @@ use Aternos\Licensee\TextTransformer\StripUnlicenseOptionalTransformer;
 use Aternos\Licensee\TextTransformer\StripUrlTransformer;
 use Aternos\Licensee\TextTransformer\StripVersionTransformer;
 use Aternos\Licensee\TextTransformer\StripWhitespaceTransformer;
+use Aternos\Licensee\TextTransformer\TextTransformer;
 
 class LicenseText
 {
+    /**
+     * @var TextTransformer[]
+     */
     protected array $transformers;
     protected ?string $normalizedContent = null;
     protected ?array $wordSet = null;
@@ -101,7 +105,7 @@ class LicenseText
     public function getNormalizedContent(): string
     {
         if ($this->normalizedContent === null) {
-            $this->normalizedContent = $this->content;
+            $this->normalizedContent = mb_convert_encoding($this->content, 'utf8');
             foreach ($this->transformers as $transformer) {
                 $this->normalizedContent = $transformer->transform($this->normalizedContent);
                 $this->normalizedContent = RegExpException::handleNull(preg_replace("# +#", " ", $this->normalizedContent));
